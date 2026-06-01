@@ -1,8 +1,8 @@
-from bytecode import BytecodeGenerator
-from parser import Parser
-from scanner import Scanner
-from semantic import SemanticAnalyzer
-from tac import TACGenerator
+from compilador.bytecode import BytecodeGenerator
+from compilador.parser import Parser
+from compilador.scanner import Scanner
+from compilador.semantic import SemanticAnalyzer
+from compilador.tac import TACGenerator
 
 
 SOURCE = """

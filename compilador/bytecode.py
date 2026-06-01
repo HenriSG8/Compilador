@@ -1,4 +1,4 @@
-from tac import TACInstruction
+from .tac import TACInstruction
 
 
 class BytecodeGenerator:

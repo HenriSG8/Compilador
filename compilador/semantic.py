@@ -1,5 +1,5 @@
-from ast_nodes import Assign, Binary, Block, If, Literal, Print, Program, Read, Unary, VarDecl, Variable, While
-from tokens import TokenType
+from .ast_nodes import Assign, Binary, Block, If, Literal, Print, Program, Read, Unary, VarDecl, Variable, While
+from .tokens import TokenType
 
 
 class SemanticError(Exception):

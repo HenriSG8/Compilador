@@ -1,4 +1,4 @@
-from tokens import KEYWORDS, Token, TokenType
+from .tokens import KEYWORDS, Token, TokenType
 
 
 class ScannerError(Exception):

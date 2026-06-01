@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from ast_nodes import Assign, Binary, Block, If, Literal, Print, Program, Read, Unary, VarDecl, Variable, While
+from .ast_nodes import Assign, Binary, Block, If, Literal, Print, Program, Read, Unary, VarDecl, Variable, While
 
 
 @dataclass
