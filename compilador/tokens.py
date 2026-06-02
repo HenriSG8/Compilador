@@ -4,6 +4,7 @@ from typing import Any
 
 
 class TokenType(Enum):
+    # Simbolos simples da linguagem, como parenteses, chaves e operadores.
     LEFT_PAREN = auto()
     RIGHT_PAREN = auto()
     LEFT_BRACE = auto()
@@ -36,6 +37,8 @@ class TokenType(Enum):
 
 
 KEYWORDS = {
+    # Palavras reservadas: quando o scanner encontra esses textos,
+    # eles nao viram identificadores comuns.
     "int": TokenType.INT,
     "bool": TokenType.BOOL,
     "if": TokenType.IF,
@@ -50,6 +53,7 @@ KEYWORDS = {
 
 @dataclass(frozen=True)
 class Token:
+    # Um token guarda o tipo reconhecido, o texto original e a posicao no codigo.
     type: TokenType
     lexeme: str
     literal: Any

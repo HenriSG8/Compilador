@@ -6,6 +6,7 @@ from .ast_nodes import Assign, Binary, Block, If, Literal, Print, Program, Read,
 
 @dataclass
 class TACInstruction:
+    # Instrucao intermediaria simples. Ainda eh legivel para humanos.
     op: str
     arg1: Any = None
     arg2: Any = None
@@ -33,11 +34,13 @@ class TACInstruction:
 
 class TACGenerator:
     def __init__(self):
+        # Temporarios guardam resultados parciais; labels marcam saltos.
         self.instructions: list[TACInstruction] = []
         self.temp_count = 0
         self.label_count = 0
 
     def generate(self, program: Program) -> list[TACInstruction]:
+        # Converte cada comando da AST em uma ou mais instrucoes TAC.
         self.instructions = []
         for statement in program.statements:
             self._emit_stmt(statement)
@@ -52,6 +55,7 @@ class TACGenerator:
         return f"L{self.label_count}"
 
     def _emit_stmt(self, statement) -> None:
+        # Declaracoes nao geram codigo, apenas existem para a semantica.
         if isinstance(statement, VarDecl):
             return
         if isinstance(statement, Assign):
@@ -64,6 +68,7 @@ class TACGenerator:
             for child in statement.statements:
                 self._emit_stmt(child)
         elif isinstance(statement, If):
+            # if/else vira saltos condicionais usando labels.
             else_label = self._new_label()
             end_label = self._new_label()
             condition = self._emit_expr(statement.condition)
@@ -75,6 +80,7 @@ class TACGenerator:
                 self._emit_stmt(statement.else_branch)
             self.instructions.append(TACInstruction("label", end_label))
         elif isinstance(statement, While):
+            # while precisa voltar para o inicio enquanto a condicao for verdadeira.
             start_label = self._new_label()
             end_label = self._new_label()
             self.instructions.append(TACInstruction("label", start_label))
@@ -85,6 +91,7 @@ class TACGenerator:
             self.instructions.append(TACInstruction("label", end_label))
 
     def _emit_expr(self, expression) -> str | int | bool:
+        # Expressoes retornam um valor direto ou o nome de um temporario.
         if isinstance(expression, Literal):
             return expression.value
         if isinstance(expression, Variable):

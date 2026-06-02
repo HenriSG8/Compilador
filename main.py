@@ -1,3 +1,6 @@
+import sys
+from pathlib import Path
+
 from compilador.bytecode import BytecodeGenerator
 from compilador.parser import Parser
 from compilador.scanner import Scanner
@@ -5,27 +8,20 @@ from compilador.semantic import SemanticAnalyzer
 from compilador.tac import TACGenerator
 
 
-SOURCE = """
-int x;
-bool ok;
-
-x = 2 + 3 * 4;
-ok = x > 10;
-
-if (ok) {
-    print(x);
-} else {
-    print(0);
-}
-"""
+DEFAULT_SOURCE_PATH = Path("examples/demo.c")
 
 
 def main() -> None:
+    # Este arquivo demonstra o compilador passando por todas as fases.
+    source_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_SOURCE_PATH
+    source = source_path.read_text(encoding="utf-8")
+
     print("=== CODIGO FONTE ===")
-    print(SOURCE.strip())
+    print(f"Arquivo: {source_path}")
+    print(source.strip())
 
     print("\n=== FASE A: TOKENS ===")
-    tokens = Scanner(SOURCE).scan_tokens()
+    tokens = Scanner(source).scan_tokens()
     for token in tokens:
         print(token)
 

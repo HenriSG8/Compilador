@@ -7,6 +7,7 @@ class ScannerError(Exception):
 
 class Scanner:
     def __init__(self, source: str):
+        # O scanner percorre o codigo caractere por caractere.
         self.source = source
         self.tokens: list[Token] = []
         self.start = 0
@@ -16,6 +17,7 @@ class Scanner:
         self.start_column = 1
 
     def scan_tokens(self) -> list[Token]:
+        # Enquanto houver caracteres, tenta reconhecer o proximo token.
         while not self._is_at_end():
             self.start = self.current
             self.start_column = self.column
@@ -27,6 +29,7 @@ class Scanner:
     def _scan_token(self) -> None:
         char = self._advance()
 
+        # Tokens de apenas um caractere sao os mais simples de reconhecer.
         single_char_tokens = {
             "(": TokenType.LEFT_PAREN,
             ")": TokenType.RIGHT_PAREN,
@@ -42,6 +45,7 @@ class Scanner:
             self._add_token(single_char_tokens[char])
         elif char == "/":
             if self._match("/"):
+                # Comentario de linha: ignora tudo ate a quebra de linha.
                 while self._peek() != "\n" and not self._is_at_end():
                     self._advance()
             else:
@@ -69,6 +73,7 @@ class Scanner:
             )
 
     def _identifier(self) -> None:
+        # Identificadores podem ter letras, numeros e underline.
         while self._peek().isalnum() or self._peek() == "_":
             self._advance()
 
@@ -83,6 +88,7 @@ class Scanner:
             self._add_token(token_type)
 
     def _number(self) -> None:
+        # Por enquanto a linguagem aceita apenas numeros inteiros.
         while self._peek().isdigit():
             self._advance()
 
@@ -90,6 +96,7 @@ class Scanner:
         self._add_token(TokenType.NUMBER, int(text))
 
     def _match(self, expected: str) -> bool:
+        # Usado para operadores de dois caracteres, como ==, !=, <= e >=.
         if self._is_at_end() or self.source[self.current] != expected:
             return False
 

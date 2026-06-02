@@ -8,6 +8,7 @@ class SemanticError(Exception):
 
 class SymbolTable:
     def __init__(self):
+        # Cada dicionario representa um escopo. O primeiro eh o escopo global.
         self.scopes: list[dict[str, str]] = [{}]
 
     def begin_scope(self) -> None:
@@ -17,12 +18,14 @@ class SymbolTable:
         self.scopes.pop()
 
     def declare(self, name: str, type_name: str) -> None:
+        # Nao deixa declarar duas variaveis com o mesmo nome no mesmo bloco.
         current_scope = self.scopes[-1]
         if name in current_scope:
             raise SemanticError(f"Variavel '{name}' ja declarada neste escopo.")
         current_scope[name] = type_name
 
     def get(self, name: str) -> str:
+        # Procura de dentro para fora: bloco atual, depois blocos externos.
         for scope in reversed(self.scopes):
             if name in scope:
                 return scope[name]
@@ -34,6 +37,7 @@ class SemanticAnalyzer:
         self.symbols = SymbolTable()
 
     def analyze(self, program: Program) -> None:
+        # Percorre a AST verificando regras de tipos e declaracoes.
         for statement in program.statements:
             self._analyze_stmt(statement)
 
@@ -71,6 +75,7 @@ class SemanticAnalyzer:
             raise SemanticError(f"A condicao do {command_name} deve ser bool, recebeu {actual_type}.")
 
     def _type_of(self, expression) -> str:
+        # Descobre o tipo de uma expressao: int ou bool.
         if isinstance(expression, Literal):
             return "bool" if isinstance(expression.value, bool) else "int"
         if isinstance(expression, Variable):
@@ -93,11 +98,13 @@ class SemanticAnalyzer:
             operator = expression.operator.type
 
             if operator in (TokenType.PLUS, TokenType.MINUS, TokenType.STAR, TokenType.SLASH):
+                # Operacoes aritmeticas aceitam apenas inteiros.
                 if left_type != "int" or right_type != "int":
                     raise SemanticError(f"Operador '{expression.operator.lexeme}' exige operandos int.")
                 return "int"
 
             if operator in (TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL):
+                # Comparacoes numericas recebem int e produzem bool.
                 if left_type != "int" or right_type != "int":
                     raise SemanticError(f"Operador '{expression.operator.lexeme}' exige operandos int.")
                 return "bool"

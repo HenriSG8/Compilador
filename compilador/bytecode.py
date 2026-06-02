@@ -2,6 +2,7 @@ from .tac import TACInstruction
 
 
 class BytecodeGenerator:
+    # Mapeia operadores do TAC para instrucoes do bytecode de pilha.
     OPERATORS = {
         "+": "ADD",
         "-": "SUB",
@@ -16,6 +17,7 @@ class BytecodeGenerator:
     }
 
     def generate(self, tac: list[TACInstruction]) -> list[str]:
+        # Traduz cada instrucao TAC para instrucoes simples de pilha.
         bytecode: list[str] = []
 
         for instruction in tac:
@@ -49,6 +51,7 @@ class BytecodeGenerator:
         return bytecode
 
     def _emit_load_value(self, bytecode: list[str], value) -> None:
+        # Constantes usam PUSH; variaveis e temporarios usam LOAD.
         if isinstance(value, bool):
             bytecode.append(f"PUSH {str(value).lower()}")
         elif isinstance(value, int):

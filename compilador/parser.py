@@ -8,16 +8,19 @@ class ParserError(Exception):
 
 class Parser:
     def __init__(self, tokens: list[Token]):
+        # O parser percorre a lista de tokens produzida pelo scanner.
         self.tokens = tokens
         self.current = 0
 
     def parse(self) -> Program:
+        # Um programa eh uma sequencia de declaracoes/comandos ate EOF.
         statements = []
         while not self._is_at_end():
             statements.append(self._declaration())
         return Program(statements)
 
     def _declaration(self):
+        # Declaracoes de variavel comecam por tipo; o resto eh comando.
         if self._match(TokenType.INT, TokenType.BOOL):
             return self._var_declaration(self._previous())
         return self._statement()
@@ -28,6 +31,7 @@ class Parser:
         return VarDecl(type_token.lexeme, name)
 
     def _statement(self):
+        # Decide qual tipo de comando sera lido olhando o proximo token.
         if self._match(TokenType.PRINT):
             return self._print_statement()
         if self._match(TokenType.LEFT_BRACE):
@@ -78,6 +82,7 @@ class Parser:
         return statements
 
     def _expression(self):
+        # Entrada das expressoes. A ordem abaixo implementa precedencia.
         return self._equality()
 
     def _equality(self):
@@ -139,6 +144,7 @@ class Parser:
         raise self._error(self._peek(), "Esperada expressao.")
 
     def _match(self, *types: TokenType) -> bool:
+        # Se o token atual bate com algum tipo esperado, consome ele.
         for token_type in types:
             if self._check(token_type):
                 self._advance()
@@ -146,6 +152,7 @@ class Parser:
         return False
 
     def _consume(self, token_type: TokenType, message: str) -> Token:
+        # Consome obrigatoriamente um token; se nao vier, gera erro sintatico.
         if self._check(token_type):
             return self._advance()
         raise self._error(self._peek(), message)

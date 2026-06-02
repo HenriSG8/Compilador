@@ -5,15 +5,18 @@ from .tokens import Token
 
 
 class Expr:
+    # Classe base para expressoes, como 2 + 3, x ou read().
     pass
 
 
 class Stmt:
+    # Classe base para comandos, como declaracao, atribuicao, if e while.
     pass
 
 
 @dataclass
 class Program:
+    # Raiz da AST: representa o programa inteiro.
     statements: list[Stmt]
 
 
