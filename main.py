@@ -1,11 +1,7 @@
 import sys
 from pathlib import Path
 
-from compilador.bytecode import BytecodeGenerator
-from compilador.parser import Parser
-from compilador.scanner import Scanner
-from compilador.semantic import SemanticAnalyzer
-from compilador.tac import TACGenerator
+from compilador.compiler import compile_source
 
 
 DEFAULT_SOURCE_PATH = Path("examples/demo.c")
@@ -20,27 +16,24 @@ def main() -> None:
     print(f"Arquivo: {source_path}")
     print(source.strip())
 
+    result = compile_source(source)
+
     print("\n=== FASE A: TOKENS ===")
-    tokens = Scanner(source).scan_tokens()
-    for token in tokens:
+    for token in result.tokens:
         print(token)
 
     print("\n=== FASE B: AST ===")
-    ast = Parser(tokens).parse()
-    print(ast)
+    print(result.ast)
 
     print("\n=== FASE C: SEMANTICA ===")
-    SemanticAnalyzer().analyze(ast)
     print("Analise semantica concluida com sucesso!")
 
     print("\n=== FASE D: TAC ===")
-    tac = TACGenerator().generate(ast)
-    for instruction in tac:
+    for instruction in result.tac:
         print(instruction)
 
     print("\n=== FASE E: BYTECODE ===")
-    bytecode = BytecodeGenerator().generate(tac)
-    for instruction in bytecode:
+    for instruction in result.bytecode:
         print(instruction)
 
 
